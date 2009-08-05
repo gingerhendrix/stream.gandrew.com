@@ -1,0 +1,6 @@
+%h1 Woot
+%ul
+  - @user['data']['repositories'].each do |repo|
+    %li
+      %a{:href=> "/repo/#{repo['name']}"}= repo['name']
+    

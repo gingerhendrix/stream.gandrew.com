@@ -1,0 +1,8 @@
+%h1 Woot
+%ul
+  -@repo['data'].each do |commit|
+    %div
+      %span.message= commit['message']
+       
+      %span.date= commit['authored_date']
+     
