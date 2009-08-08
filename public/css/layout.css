@@ -1,0 +1,61 @@
+
+ul#commits{
+ list-style: none;
+}
+
+ul#commits li {
+  display: block;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  width: 760px;
+  overflow: hidden;
+}
+
+ul#commits li .date{
+  display: block;
+  width: 40px;
+  height: 60px;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 30px;
+}
+
+ul#commits li .date span.day{
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-color: #800000;
+  color: #fff;
+  font-size: 18pt;
+  text-align: center;
+  line-height: 40px;
+}
+
+ul#commits li .date span.month{
+  display: block;
+  width: 38px;
+  height: 20px;
+  border: 1px solid #000;
+  text-align: center;
+}
+
+span.project{
+  font-size: 14pt;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+ul#commits li li{
+  border: none;
+  margin: 0;
+}
+
+ul#commits li ul{
+  float: left;
+  width: 600px;
+  font-size: 10pt;
+}
+
+span.time{
+  font-size: 8.5pt;
+}

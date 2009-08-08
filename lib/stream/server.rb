@@ -7,6 +7,9 @@ require 'couchrest'
 
 module Stream
   class Server < Sinatra::Base
+    puts File.dirname(__FILE__) + '/../../public'
+    enable :static
+    set :public, File.dirname(__FILE__) + '/../../public'
 
     get '/' do
       res = Net::HTTP.get_response(URI.parse('http://localhost:4567/github/user_info.js?username=gingerhendrix'));
@@ -41,7 +44,7 @@ module Stream
     end
 
     get '/commits' do
-      res = Net::HTTP.get_response(URI.parse("http://localhost:5984/github_commits/_view/github/all_commits_by_date?count=20&descending=true"))
+      res = Net::HTTP.get_response(URI.parse("http://localhost:5984/github_commits/_view/github/all_commits_by_date?count=100&descending=true"))
       @commits = JSON.parse(res.body)
       @commits = squash_commits(@commits['rows'])
       haml :commits
@@ -50,7 +53,7 @@ module Stream
     def squash_commits(array)
      squash array do |ref_commit, commit|
        ref_commit['value']['repository'] == commit['value']['repository'] &&
-       ref_commit['value']['authored_date'].slice(0,10) == commit['value']['authored_date'].slice(0,10)            
+       Time.parse(ref_commit['value']['authored_date']).yday == Time.parse(commit['value']['authored_date']).yday
      end  
     end
     

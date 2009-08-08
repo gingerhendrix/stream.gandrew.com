@@ -3,21 +3,26 @@
   %head
     %link{:href=>'/css/layout.css', :rel=>"stylesheet"}
   %body
-    %h1 Woot
-    %ul
+    %h1 Commits
+    %ul#commits
       -@commits.each do |commit|
         - if commit.kind_of? Array
           %li 
-            = "#{commit.length} commits"
+            %span.date= Time.parse(commit[0]['value']['authored_date']).strftime("<span class='day'>%d</span><span class='month'>%b</span>")
+            %span.project= commit[0]['value']['repository']
+            %span.title= "#{commit.length} commits"
             %ul      
               - commit.each do |c|
                 %li
-                  %span.project= c['value']['repository']
                   %span.message= c['value']['message']
-                  %span.date= c['value']['authored_date']
+                  %span.time=  Time.parse(c['value']['authored_date']).strftime("%H:%M:%S")
         - else
           %li
+            %span.date= Time.parse(commit['value']['authored_date']).strftime("<span class='day'>%d</span><span class='month'>%b</span>")
             %span.project= commit['value']['repository']
-            %span.message= commit['value']['message']
-            %span.date= commit['value']['authored_date']
+            %span.title= "1 commit"
+            %ul
+              %li
+                %span.message= commit['value']['message']
+                %span.time= Time.parse(commit['value']['authored_date']).strftime("%H:%M:%S")
        
