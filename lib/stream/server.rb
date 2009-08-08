@@ -3,6 +3,7 @@ require 'sinatra/base'
 require 'net/http'
 require 'haml'
 require 'json'
+require 'couchrest'
 
 module Stream
   class Server < Sinatra::Base
@@ -38,7 +39,43 @@ module Stream
         "Error!"
       end
     end
+
+    get '/commits' do
+      res = Net::HTTP.get_response(URI.parse("http://localhost:5984/github_commits/_view/github/all_commits_by_date?count=20&descending=true"))
+      @commits = JSON.parse(res.body)
+      @commits = squash_commits(@commits['rows'])
+      haml :commits
+    end
+  
+    def squash_commits(array)
+     squash array do |ref_commit, commit|
+       ref_commit['value']['repository'] == commit['value']['repository'] &&
+       ref_commit['value']['authored_date'].slice(0,10) == commit['value']['authored_date'].slice(0,10)            
+     end  
+    end
     
+    def squash(array)
+      ref_item = nil
+      squashed = []
+      array.each do |item|
+        if ref_item && yield(ref_item, item)
+          prev_item = squashed.pop()
+          if(prev_item.kind_of? Array)
+            prev_item.push(item)
+            squashed.push(prev_item)
+          else
+            squashed_item = []
+            squashed_item.push(prev_item)
+            squashed_item.push(item)
+            squashed.push(squashed_item)
+          end
+        else
+          ref_item = item
+          squashed.push(item)
+        end
+      end
+      squashed
+    end
   end
 end
 
