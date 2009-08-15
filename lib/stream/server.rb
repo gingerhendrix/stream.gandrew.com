@@ -32,22 +32,34 @@ module Stream
     end
     
     get '/repo/:name' do |name|
-      res = Net::HTTP.get_response(URI.parse("http://localhost:4567/github/commits.js?username=gingerhendrix&repo=#{name}"));
+      @repo = get_or_wait("http://localhost:4567/github/commits.js?username=gingerhendrix&repo=#{name}")
+      haml :repo if @repo 
+    end
+
+    get '/commits' do
+      @commits = get_or_wait("http://localhost:4567/github/all_commits.js?username=gingerhendrix")
+      @commits = squash_commits(@commits['data']['rows'])
+      haml :commits
+    end
+    
+    get '/gists' do
+      res = Net::HTTP.get_response(URI.parse("http://gist.github.com/api/v1/json/gists/gingerhendrix"))
+      @gists = JSON.parse(res.body)
+      haml :gists
+    end
+
+    def get_or_wait(url)
+      res = Net::HTTP.get_response(URI.parse(url));
+      result = nil
       if res.code== '200'
-        @repo = JSON.parse(res.body)
-        haml :repo
+        result = JSON.parse(res.body)
+        result
       elsif  res.code=='202'
         redirect "http://#{@request.host}:#{@request.port}/wait#{@request.fullpath}"
       else
         "Error!"
       end
-    end
-
-    get '/commits' do
-      res = Net::HTTP.get_response(URI.parse("http://localhost:5984/github_commits/_view/github/all_commits_by_date?count=100&descending=true"))
-      @commits = JSON.parse(res.body)
-      @commits = squash_commits(@commits['rows'])
-      haml :commits
+      result
     end
   
     def squash_commits(array)
