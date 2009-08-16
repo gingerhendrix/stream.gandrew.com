@@ -12,9 +12,12 @@ module Stream
     set :public, File.dirname(__FILE__) + '/../../public'
 
     get '/' do
-      res = Net::HTTP.get_response(URI.parse('http://localhost:4567/github/user_info.js?username=gingerhendrix'));
-      @user = JSON.parse(res.body)
-      haml :index
+      @user = get_or_wait('http://localhost:4567/github/user_info.js?username=gingerhendrix')
+      return if @user.nil?
+      @commits = get_or_wait("http://localhost:4567/github/all_commits.js?username=gingerhendrix")
+      return if @commits.nil?
+      @commits = squash_commits(@commits['data']['rows'].map {|c| c['value'] })
+      haml :index 
     end
     
     get '/wait/*' do
@@ -32,8 +35,12 @@ module Stream
     end
     
     get '/repo/:name' do |name|
+      @user = get_or_wait('http://localhost:4567/github/user_info.js?username=gingerhendrix');
+      return if @user.nil?
       @repo = get_or_wait("http://localhost:4567/github/commits.js?username=gingerhendrix&repo=#{name}")
-      haml :repo if @repo 
+      return if @repo.nil?
+      @commits = squash_commits(@repo['data'])      
+      haml :repo 
     end
 
     get '/commits' do
@@ -63,8 +70,8 @@ module Stream
   
     def squash_commits(array)
      squash array do |ref_commit, commit|
-       ref_commit['value']['repository'] == commit['value']['repository'] &&
-       Time.parse(ref_commit['value']['authored_date']).yday == Time.parse(commit['value']['authored_date']).yday
+       ref_commit['repository'] == commit['repository'] &&
+       Time.parse(ref_commit['authored_date']).yday == Time.parse(commit['authored_date']).yday
      end  
     end
     

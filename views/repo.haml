@@ -1,8 +1,13 @@
-%h1 Woot
-%ul
-  -@repo['data'].each do |commit|
-    %div
-      %span.message= commit['message']
-       
-      %span.date= commit['authored_date']
-     
+!!!
+%html
+  %head
+    %link{:href=>'/css/layout.css', :rel=>"stylesheet"}
+  %body
+    %h1
+      %a{:href => '/'} Stream
+      ="- #{@repo['data'][0]['repository']}"
+    = haml :_menu, :locals => {:repos => @user['data']['repositories'], :selected => @repo['data'][0]['repository'] }
+    %ul#commits
+      - @commits.each do |commit|
+        = (commit.kind_of? Array) ? haml(:_commits, :locals => {:commits => commit}) : (haml :_commits, :locals => {:commits => [commit]})
+

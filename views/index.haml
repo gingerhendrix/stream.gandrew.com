@@ -1,6 +1,14 @@
-%h1 Woot
-%ul
-  - @user['data']['repositories'].each do |repo|
-    %li
-      %a{:href=> "/repo/#{repo['name']}"}= repo['name']
-    
+!!!
+%html
+  %head
+    %link{:href=>'/css/layout.css', :rel=>"stylesheet"}
+  %body
+    %h1 Stream
+    %ul#repos
+      - @user['data']['repositories'].each do |repo|
+        %li
+          %a{:href=> "/repo/#{repo['name']}"}= repo['name']
+    %ul#commits
+      -@commits.each do |commit|
+        = (commit.kind_of? Array) ? haml(:_commits, :locals => {:commits => commit}) : (haml :_commits, :locals => {:commits => [commit]})
+       
