@@ -43,8 +43,7 @@ module Stream
     end
     
     get '/gists' do
-      res = Net::HTTP.get_response(URI.parse("http://gist.github.com/api/v1/json/gists/gingerhendrix"))
-      @gists = JSON.parse(res.body)
+      @gists = get_or_wait("http://localhost:4567/gist/gists.js?username=gingerhendrix")
       haml :gists
     end
 
