@@ -34,6 +34,31 @@ module Stream
       end
     end
     
+    get '/sparkline/:name' do |name|
+      view = "http://localhost:5984/github_commits/_design/github/_view/commits_by_month?group=true&group_level=3&startkey=%5B%22gingerhendrix%22,%22#{name}%22%5D&endkey=%5B%22gingerhendrix%22,%22#{name}%22,%7B%7D%5D"
+      res = Net::HTTP.get_response(URI.parse(view));
+      data = JSON.parse(res.body)
+      startYear = 2007
+      startMonth = 1
+      endMonth = 8
+      endYear = 2009
+      values = []
+      while(startYear <= endYear || startMonth <= endMonth )
+        if(data['rows'][0] && data['rows'][0]['key'] && data['rows'][0]['key'][2] == "#{startYear}-#{startMonth.to_s.rjust(2, '0')}")
+          commits = data['rows'].shift
+          values.push(commits['value']['count'])
+        else
+          values.push(0)
+        end
+        startMonth+=1;
+        if(startMonth > 12)
+          startYear += 1;
+          startMonth = 1;
+        end
+      end
+      redirect "http://sparklines.bitworking.info/spark.cgi?type=impulse&d=#{values.join(',')}&height=20&limits=0,30&upper=10&above-color=red&below-color=gray&width=2"
+    end
+    
     get '/repo/:name' do |name|
       @user = get_or_wait('http://localhost:4567/github/user_info.js?username=gingerhendrix');
       return if @user.nil?

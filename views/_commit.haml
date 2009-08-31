@@ -1,0 +1,3 @@
+%li
+  %span.message= commit['message']
+  %span.time=  Time.parse(commit['authored_date']).strftime("%H:%M:%S")

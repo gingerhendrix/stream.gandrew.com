@@ -1,0 +1,5 @@
+%li 
+  =haml :_item, :locals => {:commit => commits[0], :count => commits.length}
+  %ul      
+    - commits.each do |c|
+      =haml :_commit, :locals => {:commit => c}

@@ -4,10 +4,7 @@
     %link{:href=>'/css/layout.css', :rel=>"stylesheet"}
   %body
     %h1 Stream
-    %ul#repos
-      - @user['data']['repositories'].each do |repo|
-        %li
-          %a{:href=> "/repo/#{repo['name']}"}= repo['name']
+    = haml :_menu, :locals => { :repos => @user ['data']['repositories'], :selected => false}
     %ul#commits
       -@commits.each do |commit|
         = (commit.kind_of? Array) ? haml(:_commits, :locals => {:commits => commit}) : (haml :_commits, :locals => {:commits => [commit]})

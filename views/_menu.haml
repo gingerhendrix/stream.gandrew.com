@@ -1,0 +1,6 @@
+%ul#repos
+  - repos.each do |repo|
+    %li
+      %a{:href=> "/repo/#{repo['name']}", :class=> ( (repo['name']==selected) ? "selected" : "")  }= repo['name']
+      %br
+      %img{:height => 20, :src=> "/sparkline/#{repo['name']}"}

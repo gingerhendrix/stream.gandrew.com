@@ -1,0 +1,4 @@
+%span.date= Time.parse(commit['authored_date']).strftime("<span class='day'>%d</span><span class='month'>%b</span><span class='year'>%Y</span>")
+%span.project= commit['repository']
+%span.title= "#{count} commits"
+
