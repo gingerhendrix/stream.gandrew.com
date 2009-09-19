@@ -46,7 +46,7 @@ module Stream
       while(startYear <= endYear || startMonth <= endMonth )
         if(data['rows'][0] && data['rows'][0]['key'] && data['rows'][0]['key'][2] == "#{startYear}-#{startMonth.to_s.rjust(2, '0')}")
           commits = data['rows'].shift
-          values.push(commits['value']['count'])
+          values.push(commits['value'])
         else
           values.push(0)
         end
