@@ -1,6 +1,6 @@
 0.0.1
   Move gist view into json_services +done
-  Refactor views
+  Refactor views +done
   Tag and Release 0.0.1
 0.0.2
   Combine gists and commits into single feed/page

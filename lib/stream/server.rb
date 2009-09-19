@@ -2,7 +2,7 @@ require 'rubygems'
 require 'sinatra/base'
 require 'net/http'
 require 'haml'
-require 'json'
+require 'activesupport'
 require 'couchrest'
 
 module Stream
@@ -56,7 +56,7 @@ module Stream
           startMonth = 1;
         end
       end
-      redirect "http://sparklines.bitworking.info/spark.cgi?type=impulse&d=#{values.join(',')}&height=20&limits=0,30&upper=10&above-color=red&below-color=gray&width=2"
+      redirect "http://sparklines.bitworking.info/spark.cgi?type=impulse&d=#{values.join(',')}&height=20&limits=0,30&upper=10&above-color=red&below-color=gray&width=4"
     end
     
     get '/repo/:name' do |name|
@@ -83,7 +83,7 @@ module Stream
       res = Net::HTTP.get_response(URI.parse(url));
       result = nil
       if res.code== '200'
-        result = JSON.parse(res.body)
+        result = ActiveSupport::JSON.decode(res.body)
         result
       elsif  res.code=='202'
         redirect "http://#{@request.host}:#{@request.port}/wait#{@request.fullpath}"
