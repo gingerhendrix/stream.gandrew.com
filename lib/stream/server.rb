@@ -20,11 +20,12 @@ module Stream
       haml :index 
     end
     
-    get '/date/:year/:month' do
+    get '/date/:year/:month' do |year, month|
       @user = get_or_wait('http://localhost:4567/github/user_info.js?username=gingerhendrix')
       return if @user.nil?
-      @commits = get_or_wait("http://localhost:4567/github/commits_by_month.js?username=gingerhendrix&ye")
+      @commits = get_or_wait("http://localhost:4567/github/all_commits_by_month.js?username=gingerhendrix&year=#{year}&month=#{month}")
       return if @commits.nil?
+      puts @commits.inspect
       @commits = squash_commits(@commits['data']['rows'].map {|c| c['value'] })
       haml :index
     end
@@ -106,7 +107,7 @@ module Stream
       elsif  res.code=='202'
         redirect "http://#{@request.host}:#{@request.port}/wait#{@request.fullpath}"
       else
-        "Error!"
+        result = "Error!"
       end
       result
     end
