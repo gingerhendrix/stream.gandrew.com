@@ -20,6 +20,15 @@ module Stream
       haml :index 
     end
     
+    get '/date/:year/:month' do
+      @user = get_or_wait('http://localhost:4567/github/user_info.js?username=gingerhendrix')
+      return if @user.nil?
+      @commits = get_or_wait("http://localhost:4567/github/commits_by_month.js?username=gingerhendrix&ye")
+      return if @commits.nil?
+      @commits = squash_commits(@commits['data']['rows'].map {|c| c['value'] })
+      haml :index
+    end
+    
     get '/wait/*' do
       original_url = "http://#{@request.host}:#{@request.port}/#{@params[:splat]}"
       res = Net::HTTP.get_response(URI.parse(original_url));
@@ -35,7 +44,7 @@ module Stream
     end
     
     get '/sparkline/:name' do |name|
-      data = get_or_wait("http://localhost:4567/github/commits_by_month.js?username=gingerhendrix&project=#{name}")
+      data = get_or_wait("http://localhost:4567/github/commit_counts_by_month.js?username=gingerhendrix&project=#{name}")
       return if data.nil?
       data = data['data']
       

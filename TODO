@@ -1,11 +1,12 @@
 0.0.1
   Move gist view into json_services +done
   Refactor views +done
-  Tag and Release 0.0.1
-0.0.2
+  Tag and Release 0.0.1 +skip
+  Move sparkline stuff into json_services +done
+  Tag and Release 0.0.2 +dfone
   Combine gists and commits into single feed/page
-0.0.3
+  Order menu by recent activity
   Implement paging
-0.0.4
   Implement JS-based fetching
+  Implement scheduler for json_proxy
 
