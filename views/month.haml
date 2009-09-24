@@ -1,0 +1,13 @@
+!!!
+%html
+  %head
+    %link{:href=>'/css/layout.css', :rel=>"stylesheet"}
+  %body
+    %h1 Stream
+    = haml :_menu, :locals => { :repos => @user ['data']['repositories'], :selected => false}
+    %h2= @date.strftime("%B %y")
+    %a{ :href => "/date/" + (@date - 1.month).strftime("%Y/%m") }= (@date - 1.month).strftime("%B")
+    %a{ :href => "/date/" + (@date + 1.month).strftime("%Y/%m") }= (@date + 1.month).strftime("%B")
+    %ul#commits
+      -@commits.each do |commit|
+        = (commit.kind_of? Array) ? haml(:_commits, :locals => {:commits => commit}) : (haml :_commits, :locals => {:commits => [commit]})

@@ -21,13 +21,15 @@ module Stream
     end
     
     get '/date/:year/:month' do |year, month|
+      @year = year.to_i
+      @month = month.to_i
+      @date = DateTime.civil(@year, @month)
       @user = get_or_wait('http://localhost:4567/github/user_info.js?username=gingerhendrix')
       return if @user.nil?
       @commits = get_or_wait("http://localhost:4567/github/all_commits_by_month.js?username=gingerhendrix&year=#{year}&month=#{month}")
       return if @commits.nil?
-      puts @commits.inspect
       @commits = squash_commits(@commits['data']['rows'].map {|c| c['value'] })
-      haml :index
+      haml :month
     end
     
     get '/wait/*' do
